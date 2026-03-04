@@ -5,7 +5,7 @@ export const getAllNotes = async (req, res) => {
   const { page = 1, perPage = 15, search, tag } = req.query;
   const skip = (page - 1) * perPage;
 
-  const notesQuery = Note.find();
+  const notesQuery = Note.find({ userId: req.user._id });
 
   if (search) {
     notesQuery.where({ $text: { $search: search } });
@@ -15,25 +15,25 @@ export const getAllNotes = async (req, res) => {
     notesQuery.where('tag').in(tag);
   }
 
-  const [totalItems, notes] = await Promise.all([
+  const [totalNotes, notes] = await Promise.all([
     notesQuery.clone().countDocuments(),
     notesQuery.skip(skip).limit(perPage),
   ]);
 
-  const totalPages = Math.ceil(totalItems / perPage);
+  const totalPages = Math.ceil(totalNotes / perPage);
 
   res.status(200).json({
     page,
     perPage,
-    totalItems,
+    totalNotes,
     totalPages,
     notes,
   });
 };
 
 export const getNoteById = async (req, res) => {
-  const id = req.params.noteId;
-  const note = await Note.findById(id);
+  const { noteId } = req.params;
+  const note = await Note.findById({ _id: noteId, userId: req.user._id });
 
   if (!note) {
     throw createHttpError(404, 'Note not found');
@@ -43,7 +43,7 @@ export const getNoteById = async (req, res) => {
 };
 
 export const createNote = async (req, res) => {
-  const note = await Note.create(req.body);
+  const note = await Note.create({ ...req.body, userId: req.user._id });
   res.status(201).json(note);
 };
 
@@ -51,6 +51,7 @@ export const deleteNote = async (req, res) => {
   const { noteId } = req.params;
   const note = await Note.findOneAndDelete({
     _id: noteId,
+    userId: req.user._id,
   });
 
   if (!note) {
@@ -63,9 +64,13 @@ export const deleteNote = async (req, res) => {
 export const updateNote = async (req, res) => {
   const { noteId } = req.params;
 
-  const note = await Note.findOneAndUpdate({ _id: noteId }, req.body, {
-    new: true,
-  });
+  const note = await Note.findOneAndUpdate(
+    { _id: noteId, userId: req.user._id },
+    req.body,
+    {
+      new: true,
+    },
+  );
 
   if (!note) {
     throw createHttpError(404, 'Note not found');
