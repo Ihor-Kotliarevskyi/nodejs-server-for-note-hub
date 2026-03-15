@@ -12,13 +12,13 @@ export const getAllNotesSchema = {
     perPage: Joi.number().integer().min(5).max(20).default(10),
     tag: Joi.string().valid(...TAGS),
     search: Joi.string().trim().allow(''),
-  }),
+  }).unknown(false),
 };
 
 export const noteIdSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(),
-  }),
+  }).unknown(false),
 };
 
 export const createNoteSchema = {
@@ -37,13 +37,13 @@ export const createNoteSchema = {
         'string.base': 'Tag must be a string',
         'any.only': `Tag must be one of: ${TAGS}`,
       }),
-  }),
+  }).unknown(false),
 };
 
 export const updateNoteSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(),
-  }),
+  }).unknown(false),
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).messages({
       'string.base': 'Title must be a string',
@@ -58,5 +58,7 @@ export const updateNoteSchema = {
         'string.base': 'Tag must be a string',
         'any.only': `Tag must be one of: ${TAGS}`,
       }),
-  }).min(1),
+  })
+    .min(1)
+    .unknown(false),
 };

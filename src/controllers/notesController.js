@@ -12,7 +12,7 @@ export const getAllNotes = async (req, res) => {
   }
 
   if (tag) {
-    notesQuery.where('tag').in(tag);
+    notesQuery.where('tag').in(Array.isArray(tag) ? tag : [tag]);
   }
 
   const [totalNotes, notes] = await Promise.all([
@@ -43,7 +43,13 @@ export const getNoteById = async (req, res) => {
 };
 
 export const createNote = async (req, res) => {
-  const note = await Note.create({ ...req.body, userId: req.user._id });
+  const { title, content, tag } = req.body;
+  const note = await Note.create({
+    title,
+    content: content ?? '',
+    tag: tag ?? 'Todo',
+    userId: req.user._id,
+  });
   res.status(201).json(note);
 };
 
@@ -63,13 +69,15 @@ export const deleteNote = async (req, res) => {
 
 export const updateNote = async (req, res) => {
   const { noteId } = req.params;
+  const update = {};
+  if (req.body.title !== undefined) update.title = req.body.title;
+  if (req.body.content !== undefined) update.content = req.body.content;
+  if (req.body.tag !== undefined) update.tag = req.body.tag;
 
   const note = await Note.findOneAndUpdate(
     { _id: noteId, userId: req.user._id },
-    req.body,
-    {
-      new: true,
-    },
+    update,
+    { new: true, runValidators: true },
   );
 
   if (!note) {

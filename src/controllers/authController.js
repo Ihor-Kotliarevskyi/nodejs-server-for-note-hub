@@ -12,14 +12,12 @@ import { sendEmail } from '../utils/sendMail.js';
 
 export const registerUser = async (req, res) => {
   const { email, password } = req.body;
-
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw createHttpError(400, 'Email in use');
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
   const newUser = await User.create({
     email,
     password: hashedPassword,
@@ -33,8 +31,8 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
+
   if (!user) {
     throw createHttpError(401, 'Invalid credentials');
   }
@@ -94,11 +92,11 @@ export const refreshUserSession = async (req, res) => {
 
 export const requestResetEmail = async (req, res) => {
   const { email } = req.body;
-
   const user = await User.findOne({ email });
+  // Always return same response to prevent email enumeration
   if (!user) {
-    return res.status(404).json({
-      message: 'User not found',
+    return res.status(200).json({
+      message: 'Password reset email sent successfully',
     });
   }
 
@@ -107,7 +105,6 @@ export const requestResetEmail = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: '15m' },
   );
-
   const templatePath = path.resolve('src/templates/reset-password-email.html');
   const templateSource = await fs.readFile(templatePath, 'utf-8');
   const template = handlebars.compile(templateSource);
@@ -137,7 +134,6 @@ export const requestResetEmail = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   const { password, token } = req.body;
-
   let payload;
 
   try {
