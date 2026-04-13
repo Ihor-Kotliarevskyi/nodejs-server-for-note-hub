@@ -12,15 +12,15 @@ A RESTful backend service for managing personal notes with authentication, built
 
 ## ✨ Features
 
-- 🔐 **JWT Authentication** — Register, login, logout with access & refresh token rotation via HTTP-only cookies
-- 📧 **Password Reset** — Secure recovery flow via email link (Nodemailer + Handlebars HTML template)
-- 👤 **Avatar Upload** — Update profile photo stored on Cloudinary via Multer
-- 📋 **Notes CRUD** — Full create, read, update, delete for personal notes, scoped per user
-- 🔍 **Full-text Search** — MongoDB text index on `title` and `content` fields with weighted scoring
-- 🏷️ **Tag Filtering** — Filter notes by category (Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo)
-- 📄 **Pagination** — Configurable `page` / `perPage` query params with total count response
-- ✅ **Request Validation** — All endpoints validated with `celebrate` (Joi-based)
-- 🪵 **Structured Logging** — HTTP request logging via `pino-http` + `pino-pretty`
+- 🔐 **JWT Authentication** - Register, login, logout with access & refresh token rotation via HTTP-only cookies
+- 📧 **Password Reset** - Secure recovery flow via email link (Nodemailer + Handlebars HTML template)
+- 👤 **Avatar Upload** - Update profile photo stored on Cloudinary via Multer
+- 📋 **Notes CRUD** - Full create, read, update, delete for personal notes, scoped per user
+- 🔍 **Full-text Search** - MongoDB text index on `title` and `content` fields with weighted scoring
+- 🏷️ **Tag Filtering** - Filter notes by category (Work, Personal, Meeting, Shopping, Ideas, Travel, Finance, Health, Important, Todo)
+- 📄 **Pagination** - Configurable `page` / `perPage` query params with total count response
+- ✅ **Request Validation** - All endpoints validated with `celebrate` (Joi-based)
+- 🪵 **Structured Logging** - HTTP request logging via `pino-http` + `pino-pretty`
 
 ---
 
